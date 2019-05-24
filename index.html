@@ -128,6 +128,11 @@
                             <td><input type="range"></td>
                             <td><input type="range"></td>
                         </tr>
+                        <tr>
+                            <td colspan="2">Multiplicador de velocidad</td>
+                            <td><input type="range" id="speedRange" value="30"></td>
+                            <td><span id="speedRangeValue">30</span></td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -233,8 +238,12 @@
         frames: {},
         animations: {}
     }
+    window.speed = 30
     window.rendering = {}
     //EXTEND DOM
+    const difference = function (num1, num2) {
+        return Math.abs(num1 - num2);
+    }
     Element.prototype.remove = function () {
         this.parentElement.removeChild(this);
     }
@@ -247,13 +256,24 @@
     }
 
     //LISTENERS
+    $(document).on('change', '#speedRange', function (e) {
+        window.speed = difference(e.target.value, 100)
+        document.getElementById("speedRangeValue").innerHTML = e.target.value
+    });
+
     $(document).on('change', '#graphsSelect', function (e) {
-        render({ path: e.target.value, tileX: 12, tileY: 10 }, 1)
+        let l = loads.frames[e.target.value]
+        l.imageObject = new Image();
+        l.imageObject.src = `./graphics/${l.image}.png`;
+        render({ img: l.imageObject, tileX: 12, tileY: 10 }, 1)
     });
 
     $(document).on('change', '#framesSelect', function (e) {
-        const l = loads.frames[e.target.value]
-        render({ path: l.image, tileX: 12, tileY: 10, marginX: l.marginX, marginY: l.marginY, width: l.width, height: l.height }, 1)
+        let l = loads.frames[e.target.value]
+        l.imageObject = new Image();
+        l.imageObject.src = `./graphics/${l.image}.png`;
+        console.log(l)
+        render({ img: l.imageObject, tileX: 12, tileY: 10, marginX: l.marginX, marginY: l.marginY, width: l.width, height: l.height }, 1, "animation")
     });
 
     let count = 0
@@ -284,7 +304,7 @@
             count++
             if (count === l.frames.length)
                 count = 0
-        }, 1000 / (parseInt(l.speed) / 30))
+        }, 1000 / (parseInt(l.speed) / window.speed))
     });
 
     for (let index = 0; index < 4; index++) {
