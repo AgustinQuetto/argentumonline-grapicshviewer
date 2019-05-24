@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Argentum Online - Graphics Viewer</title>
+    <style type="text/css">
+        body {
+            background: black;
+            margin: 0px;
+            color: white;
+        }
+
+        canvas {
+            visibility: visible;
+            position: absolute;
+        }
+
+        #render {
+            margin: 1px;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        select {
+            min-width: 100px;
+        }
+
+        #application {
+            position: absolute;
+            display: flex;
+            flex-direction: row;
+            bottom: 200px;
+        }
+
+        #l0 {
+            z-index: 1;
+        }
+
+        #l1 {
+            z-index: 2;
+        }
+
+        #l3 {
+            z-index: 3;
+        }
+
+        #l4 {
+            z-index: 4;
+        }
+
+        .reader {
+            margin-left: 100px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div id="render">
+            <img src="./graphics/background.jpg" />
+        </div>
+        <div id="application">
+            <div class="graphs">
+                Gráfico: <select id="graphsSelect"></select> <br />
+                Frames: <select id="framesSelect"></select><br />
+                Animación: <select id="animationsSelect"></select><br />
+            </div>
+            <div class="checkbox">
+                <ul>
+                    <li>
+                        <input type="checkbox" id="checkboxLayer0">Layer 0</input>
+                    </li>
+                    <li>
+                        <input type="checkbox" id="checkboxLayer1">Layer 1</input>
+                    </li>
+                    <li>
+                        <input type="checkbox" id="checkboxLayer2">Layer 2</input>
+                    </li>
+                    <li>
+                        <input type="checkbox" id="checkboxLayer3">Layer 3</input>
+                    </li>
+                    <li>
+                        <input type="checkbox" id="viewLimits">Limites</input>
+                    </li>
+                </ul>
+            </div>
+            <div class="reader">
+                <div>
+                    Graphics.ini <input type="file" id="graphicsini" name="graphicsini" /> <span
+                        id="graphicsinistatus">Esperando...</span>
+                </div>
+                <div>
+                    Cabezas <input type="file" id="headsini" name="headsini" /> <span
+                        id="headsinistatus">Esperando...</span>
+                </div>
+                <div>
+                    Cuerpos <input type="file" id="bodiesini" name="bodiesini" /> <span
+                        id="bodiesinistatus">Esperando...</span>
+                </div>
+                <div>
+                    Armas <input type="file" id="weaponsini" name="weaponsini" /> <span
+                        id="weaponsinistatus">Esperando...</span>
+                </div>
+                <div>
+                    Escudos <input type="file" id="shieldsini" name="shieldsini" /> <span
+                        id="shieldsinistatus">Esperando...</span>
+                </div>
+                <div>
+                    Cascos <input type="file" id="helmetsini" name="helmetsini" /> <span
+                        id="helmetsinistatus">Esperando...</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"
+    integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+<script>
+    let loads = {
+        frames: {},
+        animations: {}
+    }
+    //EXTEND DOM
+    Element.prototype.remove = function () {
+        this.parentElement.removeChild(this);
+    }
+    NodeList.prototype.remove = HTMLCollection.prototype.remove = function () {
+        for (var i = this.length - 1; i >= 0; i--) {
+            if (this[i] && this[i].parentElement) {
+                this[i].parentElement.removeChild(this[i]);
+            }
+        }
+    }
+
+    //LISTENERS
+    $(document).on('change', '#graphsSelect', function (e) {
+        render({ path: e.target.value, tileX: 12, tileY: 10 }, 1)
+    });
+
+    $(document).on('change', '#framesSelect', function (e) {
+        const l = loads.frames[e.target.value]
+        render({ path: l.image, tileX: 12, tileY: 10, marginX: l.marginX, marginY: l.marginY, width: l.width, height: l.height }, 1)
+    });
+
+    let count = 0
+    $(document).on('change', '#animationsSelect', function (e) {
+        count = 0
+        clearInterval(window.animationInterval)
+        const l = loads.animations[e.target.value]
+
+        for (let index = 0; index < l.frames.length; index++) {
+            const element = l.frames[index];
+            loads.frames[`Grh${element}`].imageObject = new Image();
+            loads.frames[`Grh${element}`].imageObject.src = `./graphics/${loads.frames[`Grh${element}`].image}.png`;
+        }
+
+        window.animationInterval = setInterval(() => {
+            const f = loads.frames[`Grh${l.frames[count]}`]
+            render({
+                img: f.imageObject,
+                tileX: 12,
+                tileY: 10,
+                marginX: f.marginX,
+                marginY: f.marginY,
+                width: f.width,
+                height: f.height
+            }
+                , 1, "animation")
+            count++
+            if (count === l.frames.length)
+                count = 0
+        }, (1000 / parseInt(l.speed)) * 30)
+    });
+
+    for (let index = 0; index < 4; index++) {
+        $(document).on('change', `#checkboxLayer${index}`, function (e) {
+            const checked = e.target.checked
+            let elem = document.getElementById(`l${index}`)
+            elem.style.visibility = checked ? "hidden" : "visible"
+        });
+    }
+
+    $(document).on('change', `#viewLimits`, function (e) {
+        const checked = e.target.checked
+        const stylesheet = document.styleSheets[0];
+        stylesheet.cssRules[1].style.border = checked ? "1px solid red" : "none"
+        stylesheet.cssRules[2].style.margin = checked ? "0px" : "1px"
+    });
+
+    //RENDER
+    function getTile(x, y) {
+        return {
+            x: x * 32,
+            y: y * 32
+        }
+    }
+
+    function render(obj, layerNumber, type) {
+        if (document.getElementById(`l${layerNumber}`))
+            document.getElementById(`l${layerNumber}`).remove();
+        const canvas = document.createElement("canvas")
+        canvas.setAttribute("id", `l${layerNumber}`);
+        const ctx = canvas.getContext('2d');
+        const pos = getTile(obj.tileX, obj.tileY)
+        if (type === "animation")
+            ctx.drawImage(obj.img, obj.marginX, obj.marginY, obj.width, obj.height, 0, 0, obj.width, obj.height);
+        else
+            ctx.drawImage(obj.img, 0, 0);
+        canvas.style.marginLeft = `${pos.x}px`
+        canvas.style.marginTop = `${pos.y}px`
+        $("#render").prepend(canvas);
+    }
+
+    //UI
+    function addOption(index, id) {
+        var option = document.createElement("option");
+        option.text = index
+        option.value = index;
+        var sel = document.getElementById(id);
+        sel.appendChild(option);
+    }
+
+    function handleFileSelect(evt) {
+        //var preview = document.getElementById('show-text');
+        let file = document.querySelector('#graphicsini').files[0];
+        let status = document.getElementById("graphicsinistatus")
+        status.innerHTML = "Cargando..."
+        var reader = new FileReader()
+        if (file) {
+            reader.onload = function (event) {
+                result = event.target.result.split("[Graphics]")[1].split('\n')
+                result.shift()
+                result.map(r => {
+                    let divided = r.split('=')
+                    let subdivided = divided[1].split("-")
+                    if (subdivided[0] < 2) {
+                        loads.frames[divided[0]] = {
+                            image: subdivided[1],
+                            marginX: subdivided[2],
+                            marginY: subdivided[3],
+                            width: subdivided[4],
+                            height: subdivided[5]
+                        }
+                        addOption(divided[0], "framesSelect")
+                    } else {
+                        subdivided.shift()
+                        let speed = subdivided.pop()
+                        loads.animations[divided[0]] = { frames: subdivided, speed: parseInt(speed) }
+                        addOption(divided[0], "animationsSelect")
+                    }
+                })
+
+                status.innerHTML = "Listo"
+            }
+        }
+        reader.readAsText(file);
+    }
+
+    document.getElementById('graphicsini').addEventListener('change', handleFileSelect, false);
+
+</script>
+
+</html>
