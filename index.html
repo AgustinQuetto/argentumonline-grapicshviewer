@@ -32,11 +32,17 @@
             min-width: 100px;
         }
 
+        table {
+            margin-top: 50px;
+        }
+
         #application {
             position: absolute;
             display: flex;
-            flex-direction: row;
-            bottom: 200px;
+            flex-direction: column;
+            right: 0px;
+            top: 0px;
+            z-index: 9999;
         }
 
         #l0 {
@@ -54,10 +60,6 @@
         #l4 {
             z-index: 4;
         }
-
-        .reader {
-            margin-left: 100px;
-        }
     </style>
 </head>
 
@@ -68,55 +70,157 @@
         </div>
         <div id="application">
             <div class="graphs">
-                Gráfico: <select id="graphsSelect"></select> <input type="range"> <input type="range"><br />
-                Frames: <select id="framesSelect"></select> <input type="range"> <input type="range"><br />
-                Animación: <select id="animationsSelect"></select> <input type="range" id="animationX"> <input
-                    type="range" id="animationY"><br />
+                <table>
+                    <thead>
+                        <tr style="text-align: center">
+                            <td>Tipo</td>
+                            <td>Seleccionador</td>
+                            <td>X</td>
+                            <td>Y</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Gráfico</td>
+                            <td><select id="graphsSelect"></select></td>
+                            <td><input type="range"></td>
+                            <td><input type="range"></td>
+                        </tr>
+                        <tr>
+                            <td>Frames</td>
+                            <td><select id="framesSelect"></select></td>
+                            <td><input type="range"></td>
+                            <td><input type="range"></td>
+                        </tr>
+                        <tr>
+                            <td>Animación</td>
+                            <td><select id="animationsSelect"></select></td>
+                            <td><input type="range" id="animationX"></td>
+                            <td><input type="range" id="animationY"></td>
+                        </tr>
+                        <tr>
+                            <td>Cabezas</td>
+                            <td><select id="headsSelect"></select></td>
+                            <td><input type="range"></td>
+                            <td><input type="range"></td>
+                        </tr>
+                        <tr>
+                            <td>Cuerpos</td>
+                            <td><select id="bodiesSelect"></select></td>
+                            <td><input type="range"></td>
+                            <td><input type="range"></td>
+                        </tr>
+                        <tr>
+                            <td>Armas</td>
+                            <td><select id="weaponsSelect"></select></td>
+                            <td><input type="range"></td>
+                            <td><input type="range"></td>
+                        </tr>
+                        <tr>
+                            <td>Escudos</td>
+                            <td><select id="shieldsSelect"></select></td>
+                            <td><input type="range"></td>
+                            <td><input type="range"></td>
+                        </tr>
+                        <tr>
+                            <td>Cascos</td>
+                            <td><select id="helmetsSelect"></select></td>
+                            <td><input type="range"></td>
+                            <td><input type="range"></td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
             <div class="checkbox">
-                <ul>
-                    <li>
-                        <input type="checkbox" id="checkboxLayer0">Layer 0</input>
-                    </li>
-                    <li>
-                        <input type="checkbox" id="checkboxLayer1">Layer 1</input>
-                    </li>
-                    <li>
-                        <input type="checkbox" id="checkboxLayer2">Layer 2</input>
-                    </li>
-                    <li>
-                        <input type="checkbox" id="checkboxLayer3">Layer 3</input>
-                    </li>
-                    <li>
-                        <input type="checkbox" id="viewLimits">Limites</input>
-                    </li>
-                </ul>
+                <table>
+                    <thead>
+                        <tr>
+                            <td>
+                                Layer
+                            </td>
+                            <td>
+                                Estado
+                            </td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                1
+                            </td>
+                            <td>
+                                <input type="checkbox" id="checkboxLayer1">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                2
+                            </td>
+                            <td>
+                                <input type="checkbox" id="checkboxLayer2">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                3
+                            </td>
+                            <td>
+                                <input type="checkbox" id="checkboxLayer3">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Límits
+                            </td>
+                            <td>
+                                <input type="checkbox" id="viewLimits">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
             <div class="reader">
-                <div>
-                    Graphics.ini <input type="file" id="graphicsini" name="graphicsini" /> <span
-                        id="graphicsinistatus">Esperando...</span>
-                </div>
-                <div>
-                    Cabezas <input type="file" id="headsini" name="headsini" /> <span
-                        id="headsinistatus">Esperando...</span>
-                </div>
-                <div>
-                    Cuerpos <input type="file" id="bodiesini" name="bodiesini" /> <span
-                        id="bodiesinistatus">Esperando...</span>
-                </div>
-                <div>
-                    Armas <input type="file" id="weaponsini" name="weaponsini" /> <span
-                        id="weaponsinistatus">Esperando...</span>
-                </div>
-                <div>
-                    Escudos <input type="file" id="shieldsini" name="shieldsini" /> <span
-                        id="shieldsinistatus">Esperando...</span>
-                </div>
-                <div>
-                    Cascos <input type="file" id="helmetsini" name="helmetsini" /> <span
-                        id="helmetsinistatus">Esperando...</span>
-                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <td>Index file</td>
+                            <td>Loader</td>
+                            <td>Status</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Graphics.ini</td>
+                            <td><input type="file" id="graphicsini" name="graphicsini" /></td>
+                            <td><span id="graphicsinistatus">Esperando...</span></td>
+                        </tr>
+                        <tr>
+                            <td>Cabezas</td>
+                            <td><input type="file" id="headsini" name="headsini" /></td>
+                            <td><span id="headsinistatus">Esperando...</span></td>
+                        </tr>
+                        <tr>
+                            <td>Cuerpos</td>
+                            <td><input type="file" id="bodiesini" name="bodiesini" /></td>
+                            <td><span id="bodiesinistatus">Esperando...</span></td>
+                        </tr>
+                        <tr>
+                            <td>Armas</td>
+                            <td><input type="file" id="weaponsini" name="weaponsini" /></td>
+                            <td><span id="weaponsinistatus">Esperando...</span></td>
+                        </tr>
+                        <tr>
+                            <td>Escudos</td>
+                            <td><input type="file" id="shieldsini" name="shieldsini" /></td>
+                            <td><span id="shieldsinistatus">Esperando...</span></td>
+                        </tr>
+                        <tr>
+                            <td>Cascos</td>
+                            <td><input type="file" id="helmetsini" name="helmetsini" /> </td>
+                            <td><span id="helmetsinistatus">Esperando...</span></td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 
@@ -208,12 +312,19 @@
     }
 
     function render(obj, layerNumber, type) {
-        if (document.getElementById(`l${layerNumber}`))
-            document.getElementById(`l${layerNumber}`).remove();
-        const canvas = document.createElement("canvas")
-        canvas.draggable = true
-        canvas.setAttribute("id", `l${layerNumber}`);
-        const ctx = canvas.getContext('2d');
+        let canvas = document.getElementById(`l${layerNumber}`)
+        let ctx = false
+        let firstRender = false
+        if (canvas) {
+            ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        } else {
+            firstRender = true
+            canvas = document.createElement("canvas")
+            canvas.draggable = true
+            canvas.setAttribute("id", `l${layerNumber}`);
+            ctx = canvas.getContext('2d');
+        }
         const pos = getTile(obj.tileX, obj.tileY)
         if (type === "animation")
             ctx.drawImage(obj.img, obj.marginX, obj.marginY, obj.width, obj.height, 0, 0, obj.width, obj.height);
@@ -221,7 +332,9 @@
             ctx.drawImage(obj.img, 0, 0);
         canvas.style.marginLeft = `${pos.x}px`
         canvas.style.marginTop = `${pos.y}px`
-        $("#render").prepend(canvas);
+        if (firstRender) {
+            $("#render").prepend(canvas);
+        }
     }
 
     //UI
