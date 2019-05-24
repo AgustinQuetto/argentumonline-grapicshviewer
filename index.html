@@ -22,6 +22,8 @@
             margin: 1px;
         }
 
+        .background {}
+
         ul {
             list-style: none;
         }
@@ -62,7 +64,7 @@
 <body>
     <div class="container">
         <div id="render">
-            <img src="./graphics/background.jpg" />
+            <img src="./graphics/background.jpg" class="background" />
         </div>
         <div id="application">
             <div class="graphs">
@@ -191,6 +193,7 @@
         const stylesheet = document.styleSheets[0];
         stylesheet.cssRules[1].style.border = checked ? "1px solid red" : "none"
         stylesheet.cssRules[2].style.margin = checked ? "0px" : "1px"
+        stylesheet.cssRules[3].style.margin = checked ? "2px" : "1px"
     });
 
     //RENDER
