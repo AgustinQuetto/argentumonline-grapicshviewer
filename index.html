@@ -68,9 +68,10 @@
         </div>
         <div id="application">
             <div class="graphs">
-                Gráfico: <select id="graphsSelect"></select> <br />
-                Frames: <select id="framesSelect"></select><br />
-                Animación: <select id="animationsSelect"></select><br />
+                Gráfico: <select id="graphsSelect"></select> <input type="range"> <input type="range"><br />
+                Frames: <select id="framesSelect"></select> <input type="range"> <input type="range"><br />
+                Animación: <select id="animationsSelect"></select> <input type="range" id="animationX"> <input
+                    type="range" id="animationY"><br />
             </div>
             <div class="checkbox">
                 <ul>
@@ -128,6 +129,7 @@
         frames: {},
         animations: {}
     }
+    window.rendering = {}
     //EXTEND DOM
     Element.prototype.remove = function () {
         this.parentElement.removeChild(this);
@@ -153,7 +155,8 @@
     let count = 0
     $(document).on('change', '#animationsSelect', function (e) {
         count = 0
-        clearInterval(window.animationInterval)
+        if (window.rendering["animation"])
+            clearInterval(window.rendering["animation"])
         const l = loads.animations[e.target.value]
 
         for (let index = 0; index < l.frames.length; index++) {
@@ -162,12 +165,12 @@
             loads.frames[`Grh${element}`].imageObject.src = `./graphics/${loads.frames[`Grh${element}`].image}.png`;
         }
 
-        window.animationInterval = setInterval(() => {
+        window.rendering["animation"] = setInterval(() => {
             const f = loads.frames[`Grh${l.frames[count]}`]
             render({
                 img: f.imageObject,
-                tileX: 12,
-                tileY: 10,
+                tileX: Math.round(document.getElementById("animationX").value / 5),
+                tileY: Math.round(document.getElementById("animationY").value / 5),
                 marginX: f.marginX,
                 marginY: f.marginY,
                 width: f.width,
@@ -177,7 +180,7 @@
             count++
             if (count === l.frames.length)
                 count = 0
-        }, (1000 / parseInt(l.speed)) * 30)
+        }, 1000 / (parseInt(l.speed) / 30))
     });
 
     for (let index = 0; index < 4; index++) {
@@ -208,6 +211,7 @@
         if (document.getElementById(`l${layerNumber}`))
             document.getElementById(`l${layerNumber}`).remove();
         const canvas = document.createElement("canvas")
+        canvas.draggable = true
         canvas.setAttribute("id", `l${layerNumber}`);
         const ctx = canvas.getContext('2d');
         const pos = getTile(obj.tileX, obj.tileY)
